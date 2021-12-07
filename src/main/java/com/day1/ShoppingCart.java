@@ -3,6 +3,8 @@ package com.day1;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Console;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.regex.*;
 
 public class ShoppingCart 
@@ -32,14 +34,28 @@ public class ShoppingCart
         String[] parseInput = input.split(" ");
         return parseInput[1];
     }
-    public static void main(String[] args) 
+    public static void main(String[] args) throws IOException, FileNotFoundException
     {
         List<String> cart = new ArrayList<>();
         System.out.println("Welcome to your shopping cart");
+        ShoppingCartDB dataBase = new ShoppingCartDB();
 
         Console cons = System.console();
         String input = cons.readLine("");
 
+        if (null!=args && args.length>0)
+        {
+            //read file
+        }
+        else
+        {
+            //create file
+        }
+
+        String fileName = "H:\\ys\\Desktop\\NUSISS\\JavaCode\\shoppingcart\\src\\main\\java\\com\\day1\\fred.db";
+        cart = dataBase.login(fileName);
+
+        //command input
         while (!input.equals("end"))
         {
             // list function
@@ -101,6 +117,12 @@ public class ShoppingCart
                 {
                     System.out.println("Input for delete is not an integer");
                 }
+            }
+            // Logout Function
+            else if (input.length()>=6 && input.substring(0,6).toLowerCase().equals("logout"))
+            {
+                dataBase.logout(cart,fileName);
+                break;
             }
             input = cons.readLine("");
         }
