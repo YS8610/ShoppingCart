@@ -25,7 +25,7 @@ public class ShoppingCartDB
     }
 
     //Write file 
-    public void logout(List<String> cart, String fileName) throws FileNotFoundException, IOException
+    public void save(List<String> cart, String fileName) throws FileNotFoundException, IOException
     {
         File file = new File(fileName);
         if (file.exists())
@@ -40,6 +40,16 @@ public class ShoppingCartDB
                 writer.write(s);
                 writer.newLine();
             }
+        }
+    }
+
+    static public void users(String directory)
+    {
+        File f = new File(directory);
+        String[] pathnames = f.list();
+        for (String pathname : pathnames)
+        {
+            System.out.println(pathname.substring(0,pathname.length()-3));
         }
     }
 }

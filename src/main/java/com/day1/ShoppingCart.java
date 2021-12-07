@@ -3,6 +3,7 @@ package com.day1;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Console;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.*;
@@ -43,16 +44,39 @@ public class ShoppingCart
         Console cons = System.console();
         String input = cons.readLine("");
 
-        if (null!=args && args.length>0)
+        String defaultPath = "H:\\ys\\Desktop\\NUSISS\\JavaCode\\shoppingcart\\src\\main\\java\\com\\day1\\dataBases";
+        if (null!=args && args.length>0) //check for command line argument
         {
-            //read file
+            File file = new File(args[0]);
+            if (!file.exists())
+            {
+                boolean bool = file.mkdir();
+                if (bool)
+                {
+                    System.out.println("Folder is created");
+                }
+                else
+                {
+                    System.out.println("error.");
+                }
+            }
         }
         else
         {
-            //create file
+            File file = new File(defaultPath);
+            boolean bool = file.mkdir();
+            if (bool)
+            {
+                System.out.println("Folder is created");
+            }
+            else
+            {
+                System.out.println("error.");
+            }
         }
 
-        String fileName = "H:\\ys\\Desktop\\NUSISS\\JavaCode\\shoppingcart\\src\\main\\java\\com\\day1\\fred.db";
+        String fileName = "H:\\ys\\Desktop\\NUSISS\\JavaCode\\shoppingcart\\src\\main\\java\\com\\day1\\dataBases\\fred.db";
+        String dataBaseDir = "H:\\ys\\Desktop\\NUSISS\\JavaCode\\shoppingcart\\src\\main\\java\\com\\day1\\dataBases";
         cart = dataBase.login(fileName);
 
         //command input
@@ -118,11 +142,16 @@ public class ShoppingCart
                     System.out.println("Input for delete is not an integer");
                 }
             }
-            // Logout Function
-            else if (input.length()>=6 && input.substring(0,6).toLowerCase().equals("logout"))
+            // List User function
+            else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("user"))
             {
-                dataBase.logout(cart,fileName);
-                break;
+                ShoppingCartDB.users(dataBaseDir);
+            }
+            // Save Function
+            else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("save"))
+            {
+                dataBase.save(cart,fileName);
+                System.out.println("cart saved");
             }
             input = cons.readLine("");
         }
