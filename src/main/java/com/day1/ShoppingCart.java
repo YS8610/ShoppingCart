@@ -5,7 +5,7 @@ import java.util.List;
 import java.io.Console;
 import java.util.regex.*;
 
-public class ShoppingCart 
+public class ShoppingCart
 {
     // function to parse add input string and return the string back
     static public String[] parseAdd(String input)
@@ -32,7 +32,70 @@ public class ShoppingCart
         String[] parseInput = input.split(" ");
         return parseInput[1];
     }
-    public static void main(String[] args) 
+    //list function
+    static public void list(List<String> cart)
+    {
+        if (cart.isEmpty())
+        {
+            System.out.println("Your cart is empty");
+        }
+        for (int i =0, n=cart.size();i<n;i++)
+        {
+            int listno = i +1;
+            System.out.println(listno + ". " + cart.get(i));
+        }
+    }
+    //delete function
+    static public void delete(List<String> cart, String input)
+    {
+        String a = parseDelete(input);
+        if (Pattern.matches("\\d+",a)) // check whether the delete input is a integer and convert string to integer if true
+        {
+            int deleteIndex = Integer.parseInt(a);
+            if (deleteIndex > 0 && deleteIndex <= cart.size()) // check to ensure that the deleteIndex is not more than the cart length
+            {
+                System.out.println("removing " + deleteIndex + ". " + cart.get(deleteIndex-1));
+                cart.remove(deleteIndex-1);
+            }
+            else
+            {
+                System.out.println("Incorrect item index.");
+            }
+        }
+        else
+        {
+            System.out.println("Input for delete is not an integer");
+        }
+    }
+    //Add function
+    static public void add(List<String> cart, String input)
+    {
+        if (input.length()==3 && input.substring(0,3).toLowerCase().equals("add"))
+        {
+            System.out.println("Item is required");
+        }
+        else if (input.length()>=4 && input.substring(0,3).toLowerCase().equals("add") && input.substring(3,4).equals(" "))
+        {
+            String[] arrayItem = parseAdd(input.substring(3,input.length()));
+            for (String item : arrayItem)
+            {
+                System.out.println(item);
+                if (cart.contains(item.toLowerCase())) //check for duplicate
+                {
+                    System.out.println(item + " is already in the cart.");
+                }
+                else if (item.trim().equals("")) //Ignore blank entry
+                {
+                    continue;
+                }
+                else
+                {
+                    cart.add(item);
+                }
+            }
+        }
+    }
+        public static void main(String[] args) 
     {
         List<String> cart = new ArrayList<>();
         System.out.println("Welcome to your shopping cart");
@@ -45,62 +108,17 @@ public class ShoppingCart
             // list function
             if (input.toLowerCase().trim().equals("list"))
             {
-                if (cart.isEmpty())
-                {
-                    System.out.println("Your cart is empty");
-                }
-                for (int i =0, n=cart.size();i<n;i++)
-                {
-                    int listno = i +1;
-                    System.out.println(listno + ". " + cart.get(i));
-                }
+                list(cart);
             }
             // Add function
-            else if (input.length()==3 && input.substring(0,3).toLowerCase().equals("add"))
+            else if (input.substring(0,3).toLowerCase().equals("add"))
             {
-                System.out.println("Item is required");
-            }
-            else if (input.length()>=4 && input.substring(0,3).toLowerCase().equals("add") && input.substring(3,4).equals(" "))
-            {
-                String[] arrayItem = parseAdd(input.substring(3,input.length()));
-                for (String item : arrayItem)
-                {
-                    System.out.println(item);
-                    if (cart.contains(item.toLowerCase())) //check for duplicate
-                    {
-                        System.out.println(item + " is already in the cart.");
-                    }
-                    else if (item.trim().equals("")) //Ignore blank entry
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        cart.add(item);
-                    }
-                }
+                add(cart, input);
             }
             // Delete function
             else if (input.length()>=7 && input.substring(0,6).toLowerCase().equals("delete"))
             {
-                String a = parseDelete(input);
-                if (Pattern.matches("\\d+",a)) // check whether the delete input is a integer and convert string to integer if true
-                {
-                    int deleteIndex = Integer.parseInt(a);
-                    if (deleteIndex > 0 && deleteIndex <= cart.size()) // check to ensure that the deleteIndex is not more than the cart length
-                    {
-                        System.out.println("removing " + deleteIndex + ". " + cart.get(deleteIndex-1));
-                        cart.remove(deleteIndex-1);
-                    }
-                    else
-                    {
-                        System.out.println("Incorrect item index.");
-                    }
-                }
-                else
-                {
-                    System.out.println("Input for delete is not an integer");
-                }
+                delete(cart, input);
             }
             input = cons.readLine("");
         }
