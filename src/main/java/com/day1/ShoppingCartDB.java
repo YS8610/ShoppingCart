@@ -12,28 +12,47 @@ import java.io.FileWriter;
 
 public class ShoppingCartDB
 {
-    //Read file and return shopping cart item in string 
-    public List<String> login(String fileName) throws FileNotFoundException, IOException
+    String workingDir;
+    //contructor assumed default folder is already created
+    public ShoppingCartDB()
     {
-        List<String> list1 = new ArrayList<>();
-        list1 = Files.readAllLines(Paths.get(fileName)); //Get content from fileName
+        this.workingDir = "./src/main/java/com/day1/db";
+    }
+    public ShoppingCartDB(String userDefinedDir)
+    {
+        this.workingDir = userDefinedDir;
+        File file = new File(this.workingDir);
+        if (!file.exists()) // if not exist, then exit program
+        {
+            System.out.println("No such folder. Default folder will be used");
+            this.workingDir = "./src/main/java/com/day1/db";
+        }
+    }
+
+    //login method - Read file and return shopping cart item in string 
+    public List<String> login(String userName) throws FileNotFoundException, IOException
+    {
+        List<String> cartList = new ArrayList<>();
+        String userDBfile = this.workingDir+"/"+userName+".db";
+        cartList = Files.readAllLines(Paths.get(userDBfile)); //Get content from fileName
         // for (String s : list1)
         // {
         //     System.out.println(s);
         // }
-        return list1;
+        return cartList;
     }
 
-    //Write file 
-    public void save(List<String> cart, String fileName) throws FileNotFoundException, IOException
+    //Save method - Write file 
+    public void save(List<String> cart, String userName) throws FileNotFoundException, IOException
     {
-        File file = new File(fileName);
+        String userDBfile = this.workingDir+"/"+userName+".db";
+        File file = new File(userDBfile);
         if (file.exists())
         {
             file.delete();
         }
         
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true)))
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userDBfile, true)))
         {
             for (String s : cart)
             {
@@ -43,9 +62,10 @@ public class ShoppingCartDB
         }
     }
 
-    static public String[] users(String directory)
+    //User method - display all user 
+    public String[] users()
     {
-        File f = new File(directory);
+        File f = new File(this.workingDir);
         String[] pathnames = f.list();
         String[] userName = new String[pathnames.length]; 
         int i=0;
