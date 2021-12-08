@@ -43,13 +43,18 @@ public class ShoppingCartDB
         }
     }
 
-    static public void users(String directory)
+    static public String[] users(String directory)
     {
         File f = new File(directory);
         String[] pathnames = f.list();
+        String[] userName = new String[pathnames.length]; 
+        int i=0;
         for (String pathname : pathnames)
         {
             System.out.println(pathname.substring(0,pathname.length()-3));
+            userName[i] = (pathname.substring(0,pathname.length()-3));
+            i++;
         }
+        return userName;
     }
 }
