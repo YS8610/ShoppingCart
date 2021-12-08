@@ -95,7 +95,8 @@ public class ShoppingCart
             }
         }
     }
-        public static void main(String[] args) 
+    //main function
+    public static void main(String[] args) 
     {
         List<String> cart = new ArrayList<>();
         System.out.println("Welcome to your shopping cart");
