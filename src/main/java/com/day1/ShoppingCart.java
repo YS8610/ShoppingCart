@@ -100,63 +100,38 @@ public class ShoppingCart
             }
         }
     }
+    // Main function
     public static void main(String[] args) throws IOException, FileNotFoundException
     {
         List<String> cart = new ArrayList<>();
-        ShoppingCartDB dataBase = new ShoppingCartDB();
+        if (null!=args && args.length>0) //check for command line argument
+        {
+            ShoppingCartDB dataBase = new ShoppingCartDB(args[0]);
+        }
+        else
+        {
+            ShoppingCartDB dataBase = new ShoppingCartDB();
+        }
 
         System.out.println("Welcome to your shopping cart");
         Console cons = System.console();
         String input = cons.readLine("");
 
-        String defaultPath = "./src/main/java/com/day1/cartdb";
-        String usedDefinedPath; //the path used by the program
-        // if (null!=args && args.length>0) //check for command line argument
-        // {
-        //     File file = new File(args[0]); //check if user defined folder exist
-        //     if (!file.exists()) // if not exist, then exit program
-        //     {
-        //         System.out.println("No such folder.");
-        //         System.exit(1);
-        //     }
-        //     else
-        //     {
-        //         usedDefinedPath=args[0];
-        //     }
-        // }
-        // else // if no user defined path is in command line argument
-        // {
-        //     File file = new File(defaultPath);
-        //     if (file.exists())
-        //     {
-        //         usedDefinedPath = defaultPath;
-        //     }
-        //     else
-        //     {
-        //         //create the default dir
-        //     }
-        // }
-
-        String fileName = "./src/main/java/com/day1/cartdb/fred.db";
-        String dataBaseDir = "./src/main/java/com/day1/cartdb";
-        // String dataBaseDir = usedDefinedPath;
-
-        cart = dataBase.login(fileName);
 
         //command input
         while (!input.equals("end"))
         {
-            // list function
+            // list function done
             if (input.toLowerCase().trim().equals("list"))
             {
                 list(cart);
             }
-            // Add function
+            // Add function done
             else if (input.substring(0,3).toLowerCase().equals("add"))
             {
                 add(cart, input);
             }
-            // Delete function
+            // Delete function done
             else if (input.length()>=7 && input.substring(0,6).toLowerCase().equals("delete"))
             {
                 delete(cart, input);
@@ -164,13 +139,13 @@ public class ShoppingCart
             // List User function
             else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("user"))
             {
-                ShoppingCartDB.users(dataBaseDir);
+                // ShoppingCartDB.users(dataBaseDir);
             }
             // Save Function
             else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("save"))
             {
-                dataBase.save(cart,fileName);
-                System.out.println("cart saved");
+                // dataBase.save(cart,fileName);
+                // System.out.println("cart saved");
             }
             input = cons.readLine("");
         }
