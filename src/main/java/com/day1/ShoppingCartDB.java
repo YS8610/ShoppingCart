@@ -13,19 +13,23 @@ import java.io.FileWriter;
 public class ShoppingCartDB
 {
     String workingDir;
+    boolean defaultDir =true;
     //contructor assumed default folder is already created
     public ShoppingCartDB()
     {
-        this.workingDir = "./src/main/java/com/day1/db";
+        this.workingDir = "./db";
     }
     public ShoppingCartDB(String userDefinedDir)
     {
         this.workingDir = userDefinedDir;
         File file = new File(this.workingDir);
+        this.defaultDir = false;
         if (!file.exists()) // if not exist, then exit program
         {
             System.out.println("No such folder. Default folder will be used");
-            this.workingDir = "./src/main/java/com/day1/db";
+            this.workingDir = "./db";
+            this.defaultDir = true;
+
         }
     }
 

@@ -1,10 +1,10 @@
 package com.day1;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.List;
 import java.io.Console;
-import java.io.File;
+// import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.*;
@@ -104,13 +104,14 @@ public class ShoppingCart
     public static void main(String[] args) throws IOException, FileNotFoundException
     {
         List<String> cart = new ArrayList<>();
+        ShoppingCartDB dataBase = null;
         if (null!=args && args.length>0) //check for command line argument
         {
-            ShoppingCartDB dataBase = new ShoppingCartDB(args[0]);
+            dataBase = new ShoppingCartDB(args[0]);
         }
         else
         {
-            ShoppingCartDB dataBase = new ShoppingCartDB();
+            dataBase = new ShoppingCartDB();
         }
 
         System.out.println("Welcome to your shopping cart");
@@ -136,10 +137,10 @@ public class ShoppingCart
             {
                 delete(cart, input);
             }
-            // List User function
+            // List User function done
             else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("user"))
             {
-                // ShoppingCartDB.users(dataBaseDir);
+                dataBase.users();
             }
             // Save Function
             else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("save"))
