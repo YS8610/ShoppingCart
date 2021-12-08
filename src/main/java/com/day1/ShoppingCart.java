@@ -39,7 +39,7 @@ public class ShoppingCart
     //list function
     static public void list(List<String> cart)
     {
-        if (cart.isEmpty())
+        if (cart==null || cart.isEmpty() )
         {
             System.out.println("Your cart is empty");
         }
@@ -104,6 +104,7 @@ public class ShoppingCart
     {
         List<String> cart = new ArrayList<>();
         ShoppingCartDB dataBase = null;
+        String username = null;
         if (null!=args && args.length>0) //check for command line argument
         {
             dataBase = new ShoppingCartDB(args[0]);
@@ -140,12 +141,6 @@ public class ShoppingCart
             {
                 dataBase.users();
             }
-            // Save Function
-            else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("save"))
-            {
-                // dataBase.save(cart,fileName);
-                // System.out.println("cart saved");
-            }
             // login function done
             else if (input.length()>=5 && input.substring(0,5).toLowerCase().equals("login"))
             {
@@ -157,13 +152,26 @@ public class ShoppingCart
                 {
                     if (input.split(" ").length >1)
                     {
-                        String username = input.split(" ")[1].trim();
+                        username = input.split(" ")[1].trim();
                         cart = dataBase.login(username);
                     }
                     else
                     {
                         System.out.println("Username is missing in command");
                     }
+                }
+            }
+            // Save Function
+            else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("save"))
+            {
+                if (username != null)
+                {
+                    dataBase.save(cart,username);
+                    System.out.println("cart saved for "+username);
+                }
+                else
+                {
+                    System.out.println("please login first before saving");
                 }
             }
             input = cons.readLine("");

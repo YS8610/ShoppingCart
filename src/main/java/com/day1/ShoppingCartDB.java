@@ -43,14 +43,13 @@ public class ShoppingCartDB
         }
         else
         {
-            cartList = null;
             file.createNewFile();
             System.out.println("no such user. " + userName+" cart file will be created");
             return cartList;
         }
     }
 
-    //Save method - Write file 
+    //Save method - Write file done
     public void save(List<String> cart, String userName) throws FileNotFoundException, IOException
     {
         String userDBfile = this.workingDir+"/"+userName+".db";
@@ -59,7 +58,7 @@ public class ShoppingCartDB
         {
             file.delete();
         }
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(userDBfile, true)))
         {
             for (String s : cart)
