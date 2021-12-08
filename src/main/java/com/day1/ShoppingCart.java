@@ -12,7 +12,6 @@ import java.util.regex.*;
 public class ShoppingCart 
 {
     // function to parse add input string and return the string back
-    // function to parse add input string and return the string back
     static public String[] parseAdd(String input)
     {
         if (input.contains(","))
@@ -118,7 +117,6 @@ public class ShoppingCart
         Console cons = System.console();
         String input = cons.readLine("");
 
-
         //command input
         while (!input.equals("end"))
         {
@@ -138,7 +136,7 @@ public class ShoppingCart
                 delete(cart, input);
             }
             // List User function done
-            else if (input.length()>=4 && input.substring(0,4).toLowerCase().equals("user"))
+            else if (input.length()>=5 && input.substring(0,5).toLowerCase().equals("users"))
             {
                 dataBase.users();
             }
@@ -147,6 +145,26 @@ public class ShoppingCart
             {
                 // dataBase.save(cart,fileName);
                 // System.out.println("cart saved");
+            }
+            // login function done
+            else if (input.length()>=5 && input.substring(0,5).toLowerCase().equals("login"))
+            {
+                if (input.length()==5)
+                {
+                    System.out.println("Username is missing in command");
+                }
+                else
+                {
+                    if (input.split(" ").length >1)
+                    {
+                        String username = input.split(" ")[1].trim();
+                        cart = dataBase.login(username);
+                    }
+                    else
+                    {
+                        System.out.println("Username is missing in command");
+                    }
+                }
             }
             input = cons.readLine("");
         }

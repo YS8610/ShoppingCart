@@ -13,7 +13,6 @@ import java.io.FileWriter;
 public class ShoppingCartDB
 {
     String workingDir;
-    boolean defaultDir =true;
     //contructor assumed default folder is already created
     public ShoppingCartDB()
     {
@@ -23,27 +22,32 @@ public class ShoppingCartDB
     {
         this.workingDir = userDefinedDir;
         File file = new File(this.workingDir);
-        this.defaultDir = false;
         if (!file.exists()) // if not exist, then exit program
         {
             System.out.println("No such folder. Default folder will be used");
             this.workingDir = "./db";
-            this.defaultDir = true;
-
         }
     }
 
-    //login method - Read file and return shopping cart item in string 
+    //login method - Read file and return shopping cart item in string done
     public List<String> login(String userName) throws FileNotFoundException, IOException
     {
         List<String> cartList = new ArrayList<>();
         String userDBfile = this.workingDir+"/"+userName+".db";
-        cartList = Files.readAllLines(Paths.get(userDBfile)); //Get content from fileName
-        // for (String s : list1)
-        // {
-        //     System.out.println(s);
-        // }
-        return cartList;
+        File file = new File(userDBfile);
+        if (file.exists())
+        {
+            cartList = Files.readAllLines(Paths.get(userDBfile)); //Get content from fileName
+            System.out.println("login successfully");
+            return cartList;
+        }
+        else
+        {
+            cartList = null;
+            file.createNewFile();
+            System.out.println("no such user. " + userName+" cart file will be created");
+            return cartList;
+        }
     }
 
     //Save method - Write file 
@@ -66,7 +70,7 @@ public class ShoppingCartDB
         }
     }
 
-    //User method - display all user 
+    //User method - display all user done
     public String[] users()
     {
         File f = new File(this.workingDir);
