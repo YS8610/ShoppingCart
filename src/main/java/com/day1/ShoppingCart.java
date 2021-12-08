@@ -39,7 +39,7 @@ public class ShoppingCart
     //list function
     static public void list(List<String> cart)
     {
-        if (cart==null || cart.isEmpty() )
+        if (cart.isEmpty() )
         {
             System.out.println("Your cart is empty");
         }
