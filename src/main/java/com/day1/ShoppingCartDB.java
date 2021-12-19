@@ -2,13 +2,12 @@ package com.day1;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.io.BufferedWriter;
-import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 
 public class ShoppingCartDB
 {
@@ -21,31 +20,26 @@ public class ShoppingCartDB
     public ShoppingCartDB(String userDefinedDir)
     {
         this.workingDir = userDefinedDir;
-        File file = new File(this.workingDir);
-        if (!file.exists()) // if not exist, then exit program
-        {
+        Path file = Paths.get(this.workingDir);
+        if (!Files.isDirectory(file) && !Files.exists(file)){
             System.out.println("No such folder. Default folder will be used");
             this.workingDir = "./db";
         }
     }
 
-    //login method - Read file and return shopping cart item in string done
-    public List<String> login(String userName) throws FileNotFoundException, IOException
-    {
-        List<String> cartList = new ArrayList<>();
-        String userDBfile = this.workingDir+"/"+userName+".db";
-        File file = new File(userDBfile);
-        if (file.exists())
-        {
-            cartList = Files.readAllLines(Paths.get(userDBfile)); //Get content from fileName
+    public List<String> login(String userName) throws IOException{
+        String userDBfileName = this.workingDir+"/"+userName+".db";
+        Path userDBfile = Paths.get(userDBfileName);
+        if (Files.exists(userDBfile) && !Files.isDirectory(userDBfile)){
+            List<String>cartlist = Files.readAllLines(userDBfile);
             System.out.println("login successfully");
-            return cartList;
+            return cartlist;
         }
-        else
-        {
-            file.createNewFile();
+        else{
+            Files.createFile(userDBfile);
             System.out.println("no such user. " + userName+" cart file will be created");
-            return cartList;
+            List<String> cartlist = new ArrayList<>();
+            return cartlist;
         }
     }
 
@@ -53,35 +47,32 @@ public class ShoppingCartDB
     public void save(List<String> cart, String userName) throws FileNotFoundException, IOException
     {
         String userDBfile = this.workingDir+"/"+userName+".db";
-        File file = new File(userDBfile);
-        if (file.exists())
-        {
-            file.delete();
+        Path file = Paths.get(userDBfile);
+        if (!Files.exists(file) && !Files.isDirectory(file)){
+            Files.createFile(file);
+        }
+        BufferedWriter writer = Files.newBufferedWriter(file);
+        cart.forEach(s -> {
+                try{
+                    writer.write(s);
+                    writer.newLine();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+            });
+            writer.close();
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userDBfile, true)))
-        {
-            for (String s : cart)
-            {
-                writer.write(s);
-                writer.newLine();
-            }
-        }
-    }
-
-    //User method - display all user done
-    public String[] users()
-    {
-        File f = new File(this.workingDir);
-        String[] pathnames = f.list();
-        String[] userName = new String[pathnames.length]; 
-        int i=0;
-        for (String pathname : pathnames)
-        {
-            System.out.println(pathname.substring(0,pathname.length()-3));
-            userName[i] = (pathname.substring(0,pathname.length()-3));
-            i++;
-        }
-        return userName;
+    public List<String> users() throws IOException{
+        Path dbDir = Paths.get(this.workingDir);
+        List<String> userList = new ArrayList<>();
+        Files.list(dbDir).forEach(p ->{
+            String userFileName = p.getFileName().toString();
+            String username = userFileName.substring(0,userFileName.length()-3);
+            userList.add(username);
+            System.out.println(username);
+        });
+        return userList;
     }
 }
