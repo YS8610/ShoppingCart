@@ -98,6 +98,9 @@ public class ShoppingCart {
             catch (NumberFormatException e){
                 System.out.println("input error");
             }
+            catch(StringIndexOutOfBoundsException e){
+                System.out.println("input error");
+            }
         }
     }
 }
