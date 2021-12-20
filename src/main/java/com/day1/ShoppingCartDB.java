@@ -1,78 +1,80 @@
 package com.day1;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.Path;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShoppingCartDB
 {
-    String workingDir;
-    //contructor assumed default folder is already created
-    public ShoppingCartDB()
-    {
-        this.workingDir = "./db";
+    String dir;
+    // Constructor
+    public ShoppingCartDB(){
+        this.dir = "./db";
     }
-    public ShoppingCartDB(String userDefinedDir)
-    {
-        this.workingDir = userDefinedDir;
-        Path file = Paths.get(this.workingDir);
-        if (!Files.isDirectory(file) && !Files.exists(file)){
-            System.out.println("No such folder. Default folder will be used");
-            this.workingDir = "./db";
+    public ShoppingCartDB(String dir){
+        Path folder = Path.of(dir);
+        if (!Files.exists(folder) || !Files.isDirectory(folder)){
+            try {
+                Files.createDirectories(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Error! Folder cannot be created");
+                System.exit(1);
+            }
         }
+        this.dir =dir;
     }
-
-    public List<String> login(String userName) throws IOException{
-        String userDBfileName = this.workingDir+"/"+userName+".db";
-        Path userDBfile = Paths.get(userDBfileName);
-        if (Files.exists(userDBfile) && !Files.isDirectory(userDBfile)){
-            List<String>cartlist = Files.readAllLines(userDBfile);
-            System.out.println("login successfully");
-            return cartlist;
+    // User function
+    public List<String> getUsers(){
+        Path folder = Path.of(this.dir);
+        List<String> listofUser = new ArrayList<>();
+        try {
+            listofUser = Files.list(folder)
+                .map(s -> s.getFileName().toString())
+                .filter(s -> s.substring(s.length()-3, s.length()).equals(".db"))
+                .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return listofUser;
+    }
+    // login function
+    public List<String> getCart(String userName) throws IOException{
+        Path userDB = Path.of(this.dir+"/"+userName+".db");
+        List<String> userCart = new ArrayList<>();
+        if (Files.exists(userDB) ){
+            userCart = Files.readAllLines(userDB);
         }
         else{
-            Files.createFile(userDBfile);
-            System.out.println("no such user. " + userName+" cart file will be created");
-            List<String> cartlist = new ArrayList<>();
-            return cartlist;
+            System.out.println("User file does not exist. File will be created.");
+            Files.createFile(userDB);
+        }
+        return userCart;
+    }
+    // save function
+    public void save(String username, List<String> cart){
+        if (username.isBlank()||username==null){
+            System.out.println("Please login before you can save your cart");
+        }
+        else{
+            // cart.add(0, this.dir+"/"+username+".db");
+            String cartString ="";
+            for (String s:cart){
+                cartString += s+"\n";
+            }
+            writeFile(this.dir+"/"+username+".db",cartString);
+            System.out.println("Cart is saved for "+username);
         }
     }
-
-    //Save method - Write file done
-    public void save(List<String> cart, String userName) throws FileNotFoundException, IOException
-    {
-        String userDBfile = this.workingDir+"/"+userName+".db";
-        Path file = Paths.get(userDBfile);
-        if (!Files.exists(file) && !Files.isDirectory(file)){
-            Files.createFile(file);
+    private void writeFile(String userDbDir, String toWrite){
+        Path userFile = Path.of(userDbDir);
+        try {
+            Files.writeString(userFile,toWrite);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        BufferedWriter writer = Files.newBufferedWriter(file);
-        cart.forEach(s -> {
-                try{
-                    writer.write(s);
-                    writer.newLine();
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                }
-            });
-            writer.close();
-        }
-
-    public List<String> users() throws IOException{
-        Path dbDir = Paths.get(this.workingDir);
-        List<String> userList = new ArrayList<>();
-        Files.list(dbDir).forEach(p ->{
-            String userFileName = p.getFileName().toString();
-            String username = userFileName.substring(0,userFileName.length()-3);
-            userList.add(username);
-            System.out.println(username);
-        });
-        return userList;
     }
 }
