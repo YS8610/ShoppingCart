@@ -1,127 +1,101 @@
-package com.day1;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.io.Console;
-import java.util.regex.*;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.ArrayList;
 
-public class ShoppingCart
-{
-    // function to parse add input string and return the string back
-    static public String[] parseAdd(String input)
-    {
-        if (input.contains(","))
-        {
-            String[] splitInput = input.split(",");
-            String[] parseInput = new String[splitInput.length];
-            for (int i=0, n=splitInput.length; i<n; i++)
-            {
-                parseInput[i] = splitInput[i].trim();
-            }
-            return parseInput;
-        }
-        else
-        {
-            String[] parseInput = {input.trim()};
-            return parseInput;
-        }
+public class ShoppingCart {
+    List<String> cart;
+//constructor
+    public ShoppingCart(List<String> cart){
+        this.cart = cart;
     }
-    // function to parse delete input string and return the string back
-    static public String parseDelete(String input)
-    {
-        String[] parseInput = input.split(" ");
-        return parseInput[1];
-    }
-    //list function
-    static public void list(List<String> cart)
-    {
-        if (cart.isEmpty())
-        {
-            System.out.println("Your cart is empty");
-        }
-        for (int i =0, n=cart.size();i<n;i++)
-        {
-            int listno = i +1;
-            System.out.println(listno + ". " + cart.get(i));
-        }
-    }
-    //delete function
-    static public void delete(List<String> cart, String input)
-    {
-        String a = parseDelete(input);
-        if (Pattern.matches("\\d+",a)) // check whether the delete input is a integer and convert string to integer if true
-        {
-            int deleteIndex = Integer.parseInt(a);
-            if (deleteIndex > 0 && deleteIndex <= cart.size()) // check to ensure that the deleteIndex is not more than the cart length
-            {
-                System.out.println("removing " + deleteIndex + ". " + cart.get(deleteIndex-1));
-                cart.remove(deleteIndex-1);
-            }
-            else
-            {
-                System.out.println("Incorrect item index.");
-            }
-        }
-        else
-        {
-            System.out.println("Input for delete is not an integer");
-        }
-    }
-    //Add function
-    static public void add(List<String> cart, String input)
-    {
-        if (input.length()==3 && input.substring(0,3).toLowerCase().equals("add"))
-        {
-            System.out.println("Item is required");
-        }
-        else if (input.length()>=4 && input.substring(0,3).toLowerCase().equals("add") && input.substring(3,4).equals(" "))
-        {
-            String[] arrayItem = parseAdd(input.substring(3,input.length()));
-            for (String item : arrayItem)
-            {
-                System.out.println(item);
-                if (cart.contains(item.toLowerCase())) //check for duplicate
-                {
-                    System.out.println(item + " is already in the cart.");
-                }
-                else if (item.trim().equals("")) //Ignore blank entry
-                {
-                    continue;
-                }
-                else
-                {
-                    cart.add(item);
+//method
+    public void add(List<String> items){
+        for (String s : items){
+            if(!s.isBlank()){
+                String trimeditem = s.trim().toLowerCase();
+                if (this.cart.isEmpty()){this.cart.add(trimeditem);}
+                else{
+                    if (this.cart.contains(trimeditem)){
+                        System.out.println(trimeditem+" is already in the cart.");
+                    }
+                    else{
+                        this.cart.add(trimeditem);
+                    }
                 }
             }
         }
     }
-    //main function
-    public static void main(String[] args) 
-    {
-        List<String> cart = new ArrayList<>();
+
+    public void list(){
+        if (this.cart.isEmpty()){
+            System.out.println("Shopping cart is empty");
+        }
+        else{
+            int i =1;
+            for (String s : this.cart){
+                System.out.println(i+": "+s);
+                i++;
+            }
+        }
+    }
+
+    public void delete(int index){
+        if (index <1 || this.cart.size()+1<index){
+            System.out.println("Error when deleting due to input error");
+        }
+        else{
+            System.out.println(this.cart.get(index-1)+" is deleted");
+            this.cart.remove(index-1);
+        }
+    }
+
+    public void parser(String cmd){
+        String cleanCMD = cmd.trim().toLowerCase();
+        if (cleanCMD.length()<2){
+            System.out.println("Input Error");
+        }
+        else{
+            if (cleanCMD.equals("list")){
+                list();
+            }
+            else if (cleanCMD.substring(0,3).equals("add")){
+                String[] parsedAdd = cleanCMD.substring(3).trim().split(",");
+                if (parsedAdd.length>0){
+                    List<String> listtoAdd = Arrays.asList(parsedAdd);
+                    add(listtoAdd);
+                }
+                else{
+                    System.out.println("there is no item to add");
+                }
+            }
+            else if (cleanCMD.substring(0,6).equals("delete")){
+                String[] parsedDelete = cleanCMD.split(" ");
+                if (parsedDelete.length==2){
+                    int indextoRemove = Integer.parseInt(parsedDelete[1]);
+                    delete(indextoRemove);
+                }
+            }
+        }
+    }
+//main
+    public static void main(String[] args) {
         System.out.println("Welcome to your shopping cart");
-
-        Console cons = System.console();
-        String input = cons.readLine("");
-
-        while (!input.equals("end"))
-        {
-            // list function
-            if (input.toLowerCase().trim().equals("list"))
-            {
-                list(cart);
+        List<String> cartContent = new ArrayList<>();
+        ShoppingCart cart = new ShoppingCart(cartContent);
+        Scanner scan = new Scanner(System.in);
+        while(true){
+            String cmd = scan.nextLine();
+            if (cmd.equals("end")){
+                scan.close();
+                break;
             }
-            // Add function
-            else if (input.substring(0,3).toLowerCase().equals("add"))
-            {
-                add(cart, input);
+            try{
+                cart.parser(cmd);
             }
-            // Delete function
-            else if (input.length()>=7 && input.substring(0,6).toLowerCase().equals("delete"))
-            {
-                delete(cart, input);
+            catch (NumberFormatException e){
+                System.out.println("input error");
             }
-            input = cons.readLine("");
         }
     }
 }
